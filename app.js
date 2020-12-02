@@ -3,19 +3,32 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
-
+var cors = require('cors')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var gosRouter = require('./routes/gos')
 var authRouter = require('./routes/auth')
-var authController = require('./controllers/auth.controller')
+const promBundle = require("express-prom-bundle");
+const metricsMiddleware = promBundle({includeMethod: true});
+const rateLimit = require("express-rate-limit");
 
 var app = express();
+app.use(require('express-status-monitor')());
+app.use(cors())
+app.use(metricsMiddleware)
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100
+});
 
-mongoose.connect('mongodb://localhost:27017/go-coffe-express', {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true,  useFindAndModify: false});
+app.use(limiter);
+
+   
+
+mongoose.connect('mongodb+srv://dbUser:Lu.30134596@cluster0.jf5ka.mongodb.net/go-coffe-express?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true,  useFindAndModify: false});
 
 
-app.use(logger('dev'));
+app.use(logger(':method :url :status :res[content-length] - :response-time ms'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -25,4 +38,4 @@ app.use('/users', usersRouter);
 app.use('/gos', gosRouter)
 app.use('/auth', authRouter)
 
-app.listen(3000, ()=>console.log('App running on http://localhost:3000'))
+app.listen(3333, ()=>console.log('App running on http://localhost:3333'))

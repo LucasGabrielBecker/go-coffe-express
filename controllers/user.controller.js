@@ -10,7 +10,7 @@ const { reset } = require("nodemon");
         const schema = Yup.object().shape({
             name: Yup.string().required(),
             password: Yup.string().min(8).required(),
-            age:Yup.number().min(16).required(),
+            age:Yup.number().typeError("Insira uma idade em números").min(16).required(),
             interesses:Yup.array(Yup.string()),
             email: Yup.string().email().required()
         });
@@ -20,20 +20,21 @@ const { reset } = require("nodemon");
             .then(async()=>{
                 try {
                     const newUser = new User(user)
-                    return res.json({user: await newUser.save()})
+                    const savedUser = await newUser.save()
+                    savedUser.password = undefined
+                    return res.json({user: savedUser, msg:"User created succesfully"})
                 } catch (error) {
-                    console.log(error)
+                    console.log(`Estou aqui ${error}`)
                     return res.json({succes:false, error: error.message}).status(500)                
                 }
 
             }).catch((err)=>{
-                console.log(err)
                 let errors = []
                 err.errors.map(error=>{
                     errors.push(error)
                 })
 
-                return res.json({succes:false, errors}).status(400)
+                return res.json({succes:false, error: errors}).status(400)
             })
     },
 

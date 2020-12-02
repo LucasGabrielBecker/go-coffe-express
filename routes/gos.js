@@ -10,5 +10,6 @@ router.post('/create',goController.create)
 router.get('/listGos', goController.getAllgos)
 router.get('/:id', goController.getGoById)
 router.delete('/delete/:id', goController.deleteGoById)
+router.post('/asignParticipantToGo', goController.asignParticipantToGo)
 
 module.exports = router;

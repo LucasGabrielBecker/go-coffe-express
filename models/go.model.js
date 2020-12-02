@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const crypto = require('crypto')
 
 const goSchema = new mongoose.Schema({
     name:{
@@ -23,13 +22,13 @@ const goSchema = new mongoose.Schema({
         required:true,
         trim:true,
     },
-    participants:{
+    participants:[{
         type:[mongoose.Schema.Types.ObjectId],
         ref: 'User',
         unique:false,
         trim:true,
         required:false
-    },
+    }],
     hour:{
         type:String,
         unique:false,
@@ -58,7 +57,7 @@ goSchema.pre('find', function() {
 
 goSchema.post('find', function(result) {
     // prints number of milliseconds the query took
-    console.log('find() took ' + (Date.now() - this.start) + ' millis');
+    console.log('find() took ' + (Date.now() - this.start) + ' milliseconds');
   });
 
 goSchema.post('save', function(error, doc, next) {

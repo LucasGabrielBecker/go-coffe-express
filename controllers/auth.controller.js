@@ -12,9 +12,9 @@ module.exports ={
             if(!user) return res.json({succes:false, msg:"Invalid email"})
             if(!await bcrypt.compareSync(password, user.password)) return res.json({succes:false, msg:"Invalid password"}).status(401)
             user.password = undefined;
-            const token = jwt.sign({id: user.id},)
+            const token = jwt.sign({id: user.id},config.secret)
 
-            res.json({succes:true, msg:"Logged succesfully", user}).status(200)
+            res.json({succes:true, msg:"Logged succesfully", user, token}).status(200)
             
         } catch (error) {
             console.debug(error)
